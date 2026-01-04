@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>BennyBQ PRO Epic Battle Ultimate</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f0f1f">
+<meta name="description" content="BennyBQ PRO Extreme Anime Battle - Downloader & Canvas Editor">
+
+<style>
+:root{
+--bg:#0f0f1f;
+--card:rgba(15,15,31,0.85);
+--txt:#e5e7eb;
+--mut:#94a3b8;
+--acc1:#ff4d6d;
+--acc2:#6d5aff;
+--acc3:#38bdf8;
+--hover-gradient:linear-gradient(60deg,var(--acc1),var(--acc2),var(--acc3));
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Segoe UI',Arial,sans-serif;color:var(--txt);}
+#bgVideo{position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:-2;filter:brightness(0.35);}
+#particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1;}
+#audioBg{position:fixed;bottom:10px;left:10px;z-index:10;}
+.card{
+position:relative;z-index:1;width:95%;max-width:580px;
+background:var(--card);backdrop-filter:blur(30px);border-radius:32px;
+padding:28px;margin:20px auto;box-shadow:0 30px 120px rgba(0,0,0,0.9);border:2px solid rgba(255,255,255,0.05);
+animation:neonGlow 6s linear infinite;
+}
+@keyframes neonGlow{
+0%{box-shadow:0 0 20px var(--acc1);}
+33%{box-shadow:0 0 20px var(--acc2);}
+66%{box-shadow:0 0 20px var(--acc3);}
+100%{box-shadow:0 0 20px var(--acc1);}
+}
+h1{margin:10px 0 6px;font-size:36px;text-align:center;background:linear-gradient(45deg,var(--acc1),var(--acc2),var(--acc3));
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:gradientText 5s linear infinite;}
+@keyframes gradientText{0%{background-position:0%;}50%{background-position:100%;}100%{background-position:0%;}}
+p{margin:0 0 16px;color:var(--mut);text-align:center;font-size:14px;}
+.badge{display:inline-block;padding:6px 14px;border-radius:999px;border:1px solid rgba(255,255,255,0.2);
+background:linear-gradient(120deg,var(--acc1),var(--acc2),var(--acc3));font-size:12px;color:#fff;margin:4px 2px;transition:0.3s;}
+.badge:hover{transform:scale(1.1);}
+input,select{width:100%;padding:16px;border-radius:16px;border:none;outline:none;background:rgba(0,0,0,0.4);color:#fff;font-size:14px;margin-top:12px;box-shadow:0 0 12px rgba(255,255,255,0.1);transition:0.3s;}
+input:focus,select:focus{background:rgba(0,0,0,0.6);box-shadow:0 0 14px var(--acc1);}
+.row{display:flex;gap:10px;margin-top:12px;}
+button{flex:1;padding:16px;border:none;border-radius:16px;font-weight:700;cursor:pointer;background:var(--hover-gradient);color:#001018;font-size:14px;transition:0.3s;box-shadow:0 6px 25px rgba(0,0,0,0.5);}
+button:hover{transform:scale(1.06);box-shadow:0 8px 30px rgba(0,0,0,0.7);}
+button.alt{background:rgba(0,0,0,0.35);color:#fff;border:1px solid rgba(255,255,255,0.2);}
+#status{margin:14px 0;font-size:14px;color:var(--mut);min-height:18px;text-align:center;}
+#result a{display:block;margin-top:10px;color:var(--acc1);text-align:center;font-weight:600;}
+canvas{width:100%;height:360px;border-radius:20px;border:2px solid rgba(255,255,255,0.1);margin-top:16px;background:rgba(0,0,0,0.3);touch-action:none;box-shadow:0 12px 40px rgba(0,0,0,0.5);}
+.filter-btn{margin-top:6px;padding:8px 14px;border:none;border-radius:12px;background:var(--acc2);color:#001018;cursor:pointer;font-size:12px;margin-right:4px;transition:0.3s;}
+.filter-btn:hover{transform:scale(1.05);}
+.footer{margin-top:18px;font-size:12px;color:var(--mut);text-align:center;}
+#visualizer{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+</style>
+</head>
+<body>
+
+<!-- Video Background -->
+<video id="bgVideo" autoplay muted loop>
+<source src="https://cdn.pixabay.com/vimeo/789/sample-battle-anime.mp4" type="video/mp4">
+</video>
+
+<!-- Particle Layer -->
+<canvas id="particles"></canvas>
+
+<!-- Audio Background -->
+<div id="audioBg">
+<audio id="bgMusic" autoplay loop controls>
+<source src="https://cdn.pixabay.com/audio/preview/sample-battle-theme.mp3" type="audio/mpeg">
+</audio>
+</div>
+
+<div class="card">
+<div style="text-align:center">
+<span class="badge">TikTok</span>
+<span class="badge">Instagram</span>
+<span class="badge">Facebook</span>
+<span class="badge">X</span>
+<span class="badge">Audio</span>
+</div>
+
+<h1>BennyBQ PRO Extreme Battle</h1>
+<p>Video • Audio • Foto • AI Anime Canvas</p>
+
+<input id="url" placeholder="Tempel link media di sini">
+<div class="row">
+<button onclick="download('video')">Video</button>
+<button onclick="download('audio')" class="alt">Audio</button>
+</div>
+<div class="row">
+<button onclick="download('photo')" class="alt">Foto</button>
+<button onclick="clearCanvas()" class="alt">Clear</button>
+</div>
+<div class="row">
+<button onclick="saveCanvas()" class="alt">Save</button>
+<button onclick="pasteLink()" class="alt">Paste</button>
+</div>
+
+<div id="status"></div>
+<div id="result"></div>
+
+<canvas id="canvas"></canvas>
+<canvas id="visualizer"></canvas>
+
+<div style="text-align:center;margin-top:8px;">
+<button class="filter-btn" onclick="applyFilter('brightness')">Brightness</button>
+<button class="filter-btn" onclick="applyFilter('blur')">Blur</button>
+<button class="filter-btn" onclick="applyFilter('invert')">Invert</button>
+<select id="modelSelect">
+<option value="default">Anime Style</option>
+<option value="manga">Manga Style</option>
+<option value="chibi">Chibi Style</option>
+<option value="realistic">Realistic</option>
+</select>
+</div>
+
+<div style="text-align:center;margin-top:8px;">
+<input type="text" id="apiKey" placeholder="Masukkan API key AI (OpenAI/StableDiffusion)">
+<button onclick="generateAnime()" class="alt">Generate AI Anime</button>
+</div>
+
+<div class="footer">© Benny Artady</div>
+</div>
+
+<script>
+// Particle effect 3D
+const particleCanvas=document.getElementById('particles');
+const pctx=particleCanvas.getContext('2d');
+particleCanvas.width=window.innerWidth; particleCanvas.height=window.innerHeight;
+let particles=[];
+for(let i=0;i<250;i++){particles.push({x:Math.random()*particleCanvas.width,y:Math.random()*particleCanvas.height,r:Math.random()*3+1,dx:(Math.random()-0.5)*2,dy:(Math.random()-0.5)*2});}
+function drawParticles(){pctx.clearRect(0,0,particleCanvas.width,particleCanvas.height);
+particles.forEach(p=>{pctx.beginPath();pctx.arc(p.x,p.y,p.r,0,2*Math.PI);pctx.fillStyle='rgba(255,255,255,0.35)';pctx.fill();
+p.x+=p.dx;p.y+=p.dy;if(p.x<0||p.x>particleCanvas.width)p.dx*=-1;if(p.y<0||p.y>particleCanvas.height)p.dy*=-1;});requestAnimationFrame(drawParticles);}
+drawParticles();
+
+// Canvas editor
+const canvas=document.getElementById('canvas');
+const ctx=canvas.getContext('2d');
+canvas.width=canvas.offsetWidth; canvas.height=360;
+let drawing=false;
+function pos(e){if(e.touches){const r=canvas.getBoundingClientRect();return {x:e.touches[0].clientX-r.left,y:e.touches[0].clientY-r.top};}return {x:e.offsetX,y:e.offsetY;}}
+canvas.onmousedown=e=>{drawing=true;const p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);}
+canvas.onmousemove=e=>{if(!drawing)return;const p=pos(e);ctx.lineTo(p.x,p.y);ctx.strokeStyle="#38bdf8";ctx.lineWidth=3;ctx.stroke();}
+canvas.onmouseup=()=>drawing=false;
+canvas.ontouchstart=e=>{drawing=true;const p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);}
+canvas.ontouchmove=e=>{e.preventDefault();if(!drawing)return;const p=pos(e);ctx.lineTo(p.x,p.y);ctx.strokeStyle="#38bdf8";ctx.lineWidth=3;ctx.stroke();}
+canvas.ontouchend=()=>drawing=false;
+function clearCanvas(){ctx.clearRect(0,0,canvas.width,canvas.height);}
+function saveCanvas(){const a=document.createElement('a');a.href=canvas.toDataURL("image/png");a.download="bennybq.png";a.click();}
+function applyFilter(f){ctx.filter=f==='brightness'?'brightness(1.5)':f==='blur'?'blur(3px)':f==='invert'?'invert(1)':'none';ctx.drawImage(canvas,0,0,canvas.width,canvas.height);}
+
+// UTIL
+const statusEl=document.getElementById('status');
+const resultEl=document.getElementById('result');
+function setStatus(t){statusEl.textContent=t;}
+function pasteLink(){navigator.clipboard.readText().then(t=>{if(t)document.getElementById('url').value=t;});}
+
+// Audio Visualizer
+const audio=document.getElementById('bgMusic');
+const visCanvas=document.getElementById('visualizer');
+const vctx=visCanvas.getContext('2d');
+visCanvas.width=visCanvas.offsetWidth; visCanvas.height=visCanvas.offsetHeight;
+const audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+const analyser=audioCtx.createAnalyser();
+const source=audioCtx.createMediaElementSource(audio);
+source.connect(analyser);
+analyser.connect(audioCtx.destination);
+analyser.fftSize=128;
+const bufferLength=analyser.frequencyBinCount;
+const dataArray=new Uint8Array(bufferLength);
+function drawVisualizer(){
+requestAnimationFrame(drawVisualizer);
+analyser.getByteFrequencyData(dataArray);
+vctx.clearRect(0,0,visCanvas.width,visCanvas.height);
+const barWidth=visCanvas.width/bufferLength;
+for(let i=0;i<bufferLength;i++){
+const barHeight=dataArray[i]*0.8;
+const x=i*barWidth;
+vctx.fillStyle=`rgb(${dataArray[i]+100},${50},255)`;
+vctx.fillRect(x,visCanvas.height-barHeight,barWidth,barHeight);
+}}
+audio.onplay=()=>{audioCtx.resume();drawVisualizer();}
+
+// Download 5 API
+const apiList=[
+(url)=>fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}`).then(r=>r.json()),
+(url)=>fetch('https://api.cobalt.tools/api/json',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url})}).then(r=>r.json()),
+(url)=>fetch(`https://ssstik.io/abc?url=${encodeURIComponent(url)}`).then(r=>r.text()),
+(url)=>fetch(`https://savett.cc/api?url=${encodeURIComponent(url)}`).then(r=>r.json()),
+(url)=>fetch(`https://snaptik.app/abc?url=${encodeURIComponent(url)}`).then(r=>r.text())
+];
+
+function download(type){
+const url=document.getElementById('url').value.trim();
+if(!url){setStatus('Masukkan link dulu');return;}
+resultEl.innerHTML='';setStatus('Memproses…');let tried=0;
+function tryNext(){
+if(tried>=apiList.length){setStatus('Semua server gagal');return;}
+setStatus(`Mencoba server ${tried+1}…`);
+const api=apiList[tried]; tried++;
+api(url).then(d=>{
+let link='';
+try{
+if(typeof d==='string') link=d.match(/https?:\/\/\S+/)[0];
+else if(d.data && d.data.play) link=type==='video'?d.data.play:type==='audio'?d.data.music:d.data.images[0];
+else if(d.url) link=d.url;
+if(!link)throw 1;
+resultEl.innerHTML+=`<a href="${link}" target="_blank">⬇ ${type.toUpperCase()} (Server ${tried})</a>`;
+if(type==='photo') loadImg(link);
+setStatus('Berhasil!');
+}catch(e){tryNext();}
+}).catch(()=>tryNext());
+}
+tryNext();
+}
+function loadImg(src){const img=new Image();img.crossOrigin="anonymous";img.onload=()=>ctx.drawImage(img,0,0,canvas.width,canvas.height);img.src=src;}
+
+// AI Generate
+async function generateAnime(){
+const key=document.getElementById('apiKey').value.trim();
+if(!key){setStatus('Masukkan API Key');return;}
+const style=document.getElementById('modelSelect').value;
+setStatus('Menghasilkan AI Anime…');
+try{
+const prompt=`Anime style ${style} drawing`;
+const res=await fetch('https://api.openai.com/v1/images/generations',{
+method:'POST',
+headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+body:JSON.stringify({model:'image-alpha-001',prompt:prompt,size:"512x512"})
+});
+const data=await res.json();
+const imgUrl=data.data[0].url;
+loadImg(imgUrl);
+resultEl.innerHTML+=`<a href="${imgUrl}" target="_blank">⬇ AI Anime Image</a>`;
+setStatus('Selesai!');
+}catch(e){setStatus('AI Generate gagal, cek API Key');}
+}
+</script>
+</body>
+</html>
